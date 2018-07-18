@@ -66,16 +66,23 @@
         scene.background = new THREE.Color(0xe9e9e9);
 
         var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 9000);
-        camera.position.set(100, 500, 3000);
+        camera.position.set(100, 200, 3000);
 
         var is_mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         
         if (is_mobile) {
+            
+            
+        } else {
+            
+        }
+
+        if (navigator.getVRDevices) {
             var controls = new THREE.VRControls(camera);
             controls.standing = true;
             camera.position.y = controls.userHeight;
-            
-        } else {
+        }
+        else {
             var controls = new THREE.OrbitControls(camera);
             controls.target.set(0, 100, 0);
             controls.update();
@@ -83,7 +90,6 @@
             var controls = new THREE.VRControls(camera);
             controls.standing = true;
             camera.position.y = controls.userHeight;
-            
         }
 
         var light = new THREE.HemisphereLight(0x444444,0xffffff);
@@ -138,6 +144,7 @@
 
         });
 
+
         var options = {
             color: 'black',
             background: 'white',
@@ -145,22 +152,22 @@
         };
         var enterVRButton = new webvrui.EnterVRButton(renderer.domElement, options);
         enterVRButton.on('exit', function () {
-            //camera.quaternion.set(0, 0, 0, 1);
-            camera.position.set(100, 500, 3000);
+            camera.quaternion.set(0, 0, 0, 1);
+            camera.position.set(100, 200, 3000);
         });
         enterVRButton.on('hide', function () {
             document.getElementById('ui').style.display = 'none';
-            camera.position.set(100, 500, 3000);
+            camera.position.set(100, 200, 3000);
         });
         enterVRButton.on('show', function () {
             document.getElementById('ui').style.display = 'inherit';
-            camera.position.set(100, 500, 3000);
+            camera.position.set(100, 200, 3000);
             
         });
         document.getElementById('vr-button').appendChild(enterVRButton.domElement);
         document.getElementById('no-vr').addEventListener('click', function () {
             enterVRButton.requestEnterFullscreen();
-            camera.position.set(100, 500, 3000);
+            camera.position.set(100, 200, 3000);
         });
 
 
@@ -179,8 +186,9 @@
 
             if (enterVRButton.isPresenting()) {
                 controls.update();
-                camera.position.set(50, 500, 2000);
+                camera.position.set(10, 200, 2000);
                 effect.render(scene, camera);
+
             }
             requestAnimationFrame(animate);
         }
