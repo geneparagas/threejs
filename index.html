@@ -66,11 +66,11 @@
         scene.background = new THREE.Color(0xe9e9e9);
 
         var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 9000);
-        camera.position.set(0, 1000, 3000);
+        camera.position.set(100, 1000, 3000);
 
-        var controls = new THREE.OrbitControls(camera);
-        controls.target.set(0, 100, 0);
-        controls.update();
+        var Orcontrols = new THREE.OrbitControls(camera);
+        Orcontrols.target.set(0, 100, 0);
+        Orcontrols.update();
 
         var controls = new THREE.VRControls(camera);
         controls.standing = true;
@@ -102,7 +102,7 @@
         grid.material.transparent = true;
         scene.add(grid);
 
-        var renderer = new THREE.WebGLRenderer({ antialias: true });
+        var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize(window.innerWidth, window.innerHeight);
 
@@ -135,16 +135,17 @@
         };
         var enterVRButton = new webvrui.EnterVRButton(renderer.domElement, options);
         enterVRButton.on('exit', function () {
-            camera.quaternion.set(0, 0, 0, 1);
+            //camera.quaternion.set(0, 0, 0, 1);
             camera.position.set(100, 1000, 3000);
         });
         enterVRButton.on('hide', function () {
             document.getElementById('ui').style.display = 'none';
-            camera.position.set(100, 1000, 3000);
+            camera.position.set(0, 1000, 3000);
+            controls.enabled = false;
         });
         enterVRButton.on('show', function () {
             document.getElementById('ui').style.display = 'inherit';
-            camera.position.set(100, 1000, 3000);
+            camera.position.set(0, 1000, 3000);
             
         });
         document.getElementById('vr-button').appendChild(enterVRButton.domElement);
@@ -168,8 +169,11 @@
 
             if (enterVRButton.isPresenting()) {
                 controls.update();
-                camera.position.set(100, 1000, 3000);
+                camera.position.set(0, 500, 3000);
                 effect.render(scene, camera);
+            }
+            else {
+                Orcontrols.update();
             }
 
             requestAnimationFrame(animate);
@@ -209,7 +213,6 @@
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
         }
-
     </script>
 </body>
 </html>
