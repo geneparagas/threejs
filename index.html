@@ -206,6 +206,7 @@
             if (enterVRButton.isPresenting()) {
                 controls.update();
                 camera.position.set(100, 1000, 4000);
+                effect.render(scene, camera);
             }
             else {
                 controls.enabled = true;
