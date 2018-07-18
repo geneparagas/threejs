@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>test</title>
+    <title>VR</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0, shrink-to-fit=no">
     <meta name="mobile-web-app-capable" content="yes">
@@ -67,8 +67,10 @@
 
         var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 9000);
         camera.position.set(100, 1000, 9000);
-        //var geometry = new THREE.SphereGeometry(500, 60, 40);
-        //var texture = new THREE.TextureLoader().load('Scripts/js/webVR/pano.jpg');
+
+        var controls = new THREE.VRControls(camera);
+        controls.standing = true;
+        //camera.position.y = controls.userHeight;
 
         var controls = new THREE.OrbitControls(camera);
         controls.target.set(0, 100, 0);
@@ -87,11 +89,8 @@
         light.shadow.camera.right = 3020;
         scene.add(light);
 
-        scene.add(new THREE.CameraHelper(light.shadow.camera));
+        //scene.add(new THREE.CameraHelper(light.shadow.camera));
 
-        var controls = new THREE.VRControls(camera);
-        controls.standing = true;
-        camera.position.y = controls.userHeight;
 
         //var material = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
 
@@ -104,14 +103,6 @@
         grid.material.opacity = 0.2;
         grid.material.transparent = true;
         scene.add(grid);
-
-        var renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setPixelRatio(window.devicePixelRatio);
-        renderer.setSize(window.innerWidth, window.innerHeight);
-
-        var effect = new THREE.VREffect(renderer);
-        effect.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
 
 
         var loader = new THREE.FBXLoader();
@@ -166,6 +157,15 @@
             scene.add(object);
 
         });
+
+        var renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        var effect = new THREE.VREffect(renderer);
+        effect.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
         var options = {
             color: 'black',
             background: 'white',
@@ -202,7 +202,7 @@
         animate();
 
         function animate() {
-            renderer.render(scene, camera);
+            //renderer.render(scene, camera);
             effect.render(scene, camera);
 
             if (enterVRButton.isPresenting()) {
@@ -215,9 +215,15 @@
         renderer.domElement.addEventListener('mousedown', onMouseDown, false);
         renderer.domElement.addEventListener('mousemove', onMouseMove, false);
         renderer.domElement.addEventListener('mouseup', onMouseUp, false);
+        document.addEventListener('wheel', onDocumentMouseWheel, false);
         renderer.shadowMap.enabled = true;
         window.addEventListener('resize', onResize, false);
         container.appendChild(renderer.domElement);
+
+        function onDocumentMouseWheel(event) {
+            camera.fov += event.deltaY * 0.05;
+            camera.updateProjectionMatrix();
+        }
 
         function onMouseDown(event) {
             event.preventDefault();
@@ -236,27 +242,6 @@
         }
 
         function onMouseUp(event) {
-            event.preventDefault();
-            interacting = false;
-        }
-
-        function onTouchDown(event) {
-            event.preventDefault();
-            interacting = true;
-            pointerX = event.touches[0].clientX;
-            pointerY = event.touches[0].clientY;
-            savedLng = lng;
-            savedLat = lat;
-        }
-
-        function onTouchMove(event) {
-            if (interacting) {
-                lng = (pointerX - event.touches[0].clientX) * 0.1 + savedLng;
-                lat = (pointerY - event.touches[0].clientY) * 0.1 + savedLat;
-            }
-        }
-
-        function onTouchEnd(event) {
             event.preventDefault();
             interacting = false;
         }
