@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Day 1 - 360 Photos VR</title>
+    <title>vr test</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0, shrink-to-fit=no">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="description" content="View 360 photos and photospheres in virutal reality." />
+    <meta name="description" content="virutal reality." />
     <script src="Scripts/three.js"></script>
     <script src="Scripts/js/webVR/webvr-polyfill.min.js"></script>
     <script src="Scripts/js/webVR/VRControls.js"></script>
@@ -65,10 +65,11 @@
         var scene = new THREE.Scene();
         scene.background = new THREE.Color(0xe9e9e9);
 
-        var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 9000);
+        var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 12000);
         camera.position.set(100, 1000, 9000);
-        //var geometry = new THREE.SphereGeometry(500, 60, 40);
-        //var texture = new THREE.TextureLoader().load('Scripts/js/webVR/pano.jpg');
+
+        var controls = new THREE.VRControls(camera);
+        controls.standing = true;
 
         var controls = new THREE.OrbitControls(camera);
         controls.target.set(0, 100, 0);
@@ -87,14 +88,6 @@
         light.shadow.camera.right = 3020;
         scene.add(light);
 
-        scene.add(new THREE.CameraHelper(light.shadow.camera));
-
-        var controls = new THREE.VRControls(camera);
-        controls.standing = true;
-        camera.position.y = controls.userHeight;
-
-        //var material = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
-
         var mesh = new THREE.Mesh(new THREE.PlaneBufferGeometry(6000, 6000), new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false }));
         mesh.rotation.x = - Math.PI / 2;
         mesh.receiveShadow = true;
@@ -104,15 +97,6 @@
         grid.material.opacity = 0.2;
         grid.material.transparent = true;
         scene.add(grid);
-
-        var renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setPixelRatio(window.devicePixelRatio);
-        renderer.setSize(window.innerWidth, window.innerHeight);
-
-        var effect = new THREE.VREffect(renderer);
-        effect.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
-
 
         var loader = new THREE.FBXLoader();
         loader.load('models/fbx/MEN 03.FBX', function (object) {
@@ -166,30 +150,42 @@
             scene.add(object);
 
         });
+
+        var renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        var effect = new THREE.VREffect(renderer);
+        effect.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
         var options = {
-            color: 'black',
+            color: 'bllk',
             background: 'white',
-            corners: 'square'
+            corners: 'square',
         };
         var enterVRButton = new webvrui.EnterVRButton(renderer.domElement, options);
-        enterVRButton.on('exit', function () {
-            camera.quaternion.set(0, 0, 0, 1);
-            camera.position.set(100, 1000, 6000);
-        });
         enterVRButton.on('hide', function () {
             document.getElementById('ui').style.display = 'none';
-            camera.position.set(100, 1000, 6000);
+            camera.position.set(100, 1000, 9000);
         });
+        enterVRButton.on('exit', function () {
+            scene.add(light);
+            camera.position.set(100, 1000, 9000);
+        });
+
         enterVRButton.on('show', function () {
             document.getElementById('ui').style.display = 'inherit';
-            camera.position.set(100, 1000, 6000);
-            
+            camera.position.set(100, 1000, 9000);
         });
         document.getElementById('vr-button').appendChild(enterVRButton.domElement);
         document.getElementById('no-vr').addEventListener('click', function () {
             enterVRButton.requestEnterFullscreen();
         });
 
+        document.getElementById('vr-button').addEventListener('click', function () {
+           
+        });
 
         var interacting;
         var pointerX = 0;
@@ -202,7 +198,6 @@
         animate();
 
         function animate() {
-            renderer.render(scene, camera);
             effect.render(scene, camera);
 
             if (enterVRButton.isPresenting()) {
@@ -215,9 +210,13 @@
         renderer.domElement.addEventListener('mousedown', onMouseDown, false);
         renderer.domElement.addEventListener('mousemove', onMouseMove, false);
         renderer.domElement.addEventListener('mouseup', onMouseUp, false);
-        renderer.shadowMap.enabled = true;
+        document.addEventListener('wheel', onDocumentMouseWheel, false);
         window.addEventListener('resize', onResize, false);
-        container.appendChild(renderer.domElement);
+
+        function onDocumentMouseWheel(event) {
+            camera.fov += event.deltaY * 0.05;
+            camera.updateProjectionMatrix();
+        }
 
         function onMouseDown(event) {
             event.preventDefault();
@@ -240,33 +239,11 @@
             interacting = false;
         }
 
-        function onTouchDown(event) {
-            event.preventDefault();
-            interacting = true;
-            pointerX = event.touches[0].clientX;
-            pointerY = event.touches[0].clientY;
-            savedLng = lng;
-            savedLat = lat;
-        }
-
-        function onTouchMove(event) {
-            if (interacting) {
-                lng = (pointerX - event.touches[0].clientX) * 0.1 + savedLng;
-                lat = (pointerY - event.touches[0].clientY) * 0.1 + savedLat;
-            }
-        }
-
-        function onTouchEnd(event) {
-            event.preventDefault();
-            interacting = false;
-        }
-
         function onResize() {
             effect.setSize(window.innerWidth, window.innerHeight);
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
         }
-
 
     </script>
 </body>
