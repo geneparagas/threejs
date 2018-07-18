@@ -66,15 +66,21 @@
         scene.background = new THREE.Color(0xe9e9e9);
 
         var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 9000);
-        camera.position.set(100, 1000, 3000);
+        camera.position.set(100, 200, 3000);
 
-        var Orcontrols = new THREE.OrbitControls(camera);
-        Orcontrols.target.set(0, 100, 0);
-        Orcontrols.update();
+        if (navigator.getVRDevices) {
+            var controls = new THREE.VRControls(camera);
+            controls.standing = true;
+            camera.position.y = controls.userHeight;
+        } else {
+            var controls = new THREE.OrbitControls(camera);
+            controls.target.set(0, 100, 0);
+            controls.update();
 
-        var controls = new THREE.VRControls(camera);
-        controls.standing = true;
-        camera.position.y = controls.userHeight;
+            var controls = new THREE.VRControls(camera);
+            controls.standing = true;
+            camera.position.y = controls.userHeight;
+        }
 
         var light = new THREE.HemisphereLight(0x444444,0xffffff);
         light.position.set(0, 200, 0);
@@ -111,7 +117,7 @@
         document.body.appendChild(renderer.domElement);
 
         var loader = new THREE.FBXLoader();
-        loader.load('models/fbx/SingaporeBuilding_NoRoof.fbx', function (object) {
+        loader.load('https://geneparagas.github.io/threejs/models/fbx/SingaporeBuilding_NoRoof.fbx', function (object) {
 
             object.traverse(function (child) {
 
@@ -136,16 +142,16 @@
         var enterVRButton = new webvrui.EnterVRButton(renderer.domElement, options);
         enterVRButton.on('exit', function () {
             //camera.quaternion.set(0, 0, 0, 1);
-            camera.position.set(100, 1000, 3000);
+            camera.position.set(100, 200, 3000);
         });
         enterVRButton.on('hide', function () {
             document.getElementById('ui').style.display = 'none';
-            camera.position.set(100, 1000, 3000);
+            camera.position.set(100, 200, 3000);
             controls.enabled = false;
         });
         enterVRButton.on('show', function () {
             document.getElementById('ui').style.display = 'inherit';
-            camera.position.set(100, 1000, 3000);
+            camera.position.set(100, 200, 3000);
             
         });
         document.getElementById('vr-button').appendChild(enterVRButton.domElement);
@@ -169,13 +175,9 @@
 
             if (enterVRButton.isPresenting()) {
                 controls.update();
-                camera.position.set(100, 1000, 3000);
-                renderer.antialias = true;
+                camera.position.set(100, 200, 2000);
+                effect.render(scene, camera);
             }
-            else {
-                Orcontrols.update();
-            }
-
             requestAnimationFrame(animate);
         }
 
