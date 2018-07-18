@@ -205,7 +205,10 @@
 
             if (enterVRButton.isPresenting()) {
                 controls.update();
-                camera.position.set(100, 1000, 6000);
+                camera.position.set(100, 1000, 4000);
+            }
+            else {
+                controls.enabled = true;
             }
 
             requestAnimationFrame(animate);
