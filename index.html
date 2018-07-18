@@ -66,23 +66,23 @@
         scene.background = new THREE.Color(0xe9e9e9);
 
         var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 9000);
-        camera.position.set(100, 1000, 9000);
+        camera.position.set(0, 1000, 3000);
 
         var controls = new THREE.OrbitControls(camera);
         controls.target.set(0, 100, 0);
-        controls.update();
-        
+        //controls.update();
+
         var controls = new THREE.VRControls(camera);
         controls.standing = true;
         camera.position.y = controls.userHeight;
 
-        var light = new THREE.HemisphereLight(0xffffff, 0x444444);
+        var light = new THREE.HemisphereLight(0x444444,0xffffff);
         light.position.set(0, 200, 0);
         scene.add(light);
 
         var light = new THREE.DirectionalLight(0xffffff);
         light.position.set(0, 290, 100);
-        light.castShadow = true;
+        light.castShadow = false;
         light.shadow.camera.top = 1080;
         light.shadow.camera.bottom = -100;
         light.shadow.camera.left = -1520;
@@ -92,12 +92,12 @@
         //scene.add(new THREE.CameraHelper(light.shadow.camera));
 
 
-        var mesh = new THREE.Mesh(new THREE.PlaneBufferGeometry(6000, 6000), new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false }));
+        var mesh = new THREE.Mesh(new THREE.PlaneBufferGeometry(2000, 2000), new THREE.MeshPhongMaterial({ color: 0xffffff, depthWrite: false }));
         mesh.rotation.x = - Math.PI / 2;
         mesh.receiveShadow = true;
         scene.add(mesh);
 
-        var grid = new THREE.GridHelper(6000, 20, 0x000000, 0x000000);
+        var grid = new THREE.GridHelper(2000, 20, 0x000000, 0x000000);
         grid.material.opacity = 0.2;
         grid.material.transparent = true;
         scene.add(grid);
@@ -111,7 +111,7 @@
         document.body.appendChild(renderer.domElement);
 
         var loader = new THREE.FBXLoader();
-        loader.load('models/fbx/MEN 03.FBX', function (object) {
+        loader.load('models/fbx/SingaporeBuilding_NoRoof.fbx', function (object) {
 
             object.traverse(function (child) {
 
@@ -127,43 +127,6 @@
             scene.add(object);
 
         });
-        var loader = new THREE.FBXLoader();
-        loader.load('models/fbx/single sofa.FBX', function (object) {
-
-            object.traverse(function (child) {
-
-                if (child.isMesh) {
-
-                    child.castShadow = true;
-                    child.receiveShadow = true;
-
-                }
-
-            });
-
-            scene.add(object);
-
-        });
-        var loader = new THREE.FBXLoader();
-        loader.load('models/fbx/men 22.FBX', function (object) {
-
-
-            object.traverse(function (child) {
-
-                if (child.isMesh) {
-
-                    child.castShadow = true;
-                    child.receiveShadow = true;
-
-                }
-
-            });
-
-            scene.add(object);
-
-        });
-
-        
 
         var options = {
             color: 'black',
@@ -173,15 +136,15 @@
         var enterVRButton = new webvrui.EnterVRButton(renderer.domElement, options);
         enterVRButton.on('exit', function () {
             camera.quaternion.set(0, 0, 0, 1);
-            camera.position.set(100, 1000, 6000);
+            camera.position.set(100, 1000, 3000);
         });
         enterVRButton.on('hide', function () {
             document.getElementById('ui').style.display = 'none';
-            camera.position.set(100, 1000, 6000);
+            camera.position.set(100, 1000, 3000);
         });
         enterVRButton.on('show', function () {
             document.getElementById('ui').style.display = 'inherit';
-            camera.position.set(100, 1000, 6000);
+            camera.position.set(100, 1000, 3000);
             
         });
         document.getElementById('vr-button').appendChild(enterVRButton.domElement);
@@ -205,11 +168,8 @@
 
             if (enterVRButton.isPresenting()) {
                 controls.update();
-                camera.position.set(100, 1000, 4000);
+                camera.position.set(100, 1000, 3000);
                 effect.render(scene, camera);
-            }
-            else {
-                controls.enabled = true;
             }
 
             requestAnimationFrame(animate);
@@ -249,7 +209,6 @@
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
         }
-
 
     </script>
 </body>
