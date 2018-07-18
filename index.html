@@ -66,7 +66,7 @@
         scene.background = new THREE.Color(0xe9e9e9);
 
         var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 9000);
-        camera.position.set(100, 1000, 3000);
+        camera.position.set(100, 500, 3000);
 
         var is_mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         
@@ -76,9 +76,9 @@
             camera.position.y = controls.userHeight;
             
         } else {
-            var ORcontrols = new THREE.OrbitControls(camera);
-            ORcontrols.target.set(0, 100, 0);
-            ORcontrols.update();
+            var controls = new THREE.OrbitControls(camera);
+            controls.target.set(0, 100, 0);
+            controls.update();
 
             var controls = new THREE.VRControls(camera);
             controls.standing = true;
@@ -146,21 +146,21 @@
         var enterVRButton = new webvrui.EnterVRButton(renderer.domElement, options);
         enterVRButton.on('exit', function () {
             //camera.quaternion.set(0, 0, 0, 1);
-            camera.position.set(100, 1000, 3000);
+            camera.position.set(100, 500, 3000);
         });
         enterVRButton.on('hide', function () {
             document.getElementById('ui').style.display = 'none';
-            camera.position.set(100, 1000, 3000);
+            camera.position.set(100, 500, 3000);
         });
         enterVRButton.on('show', function () {
             document.getElementById('ui').style.display = 'inherit';
-            camera.position.set(100, 1000, 3000);
+            camera.position.set(100, 500, 3000);
             
         });
         document.getElementById('vr-button').appendChild(enterVRButton.domElement);
         document.getElementById('no-vr').addEventListener('click', function () {
             enterVRButton.requestEnterFullscreen();
-            camera.position.set(100, 1000, 3000);
+            camera.position.set(100, 500, 3000);
         });
 
 
@@ -181,9 +181,6 @@
                 controls.update();
                 camera.position.set(50, 500, 2000);
                 effect.render(scene, camera);
-            }
-            else {
-                ORcontrols.update();
             }
             requestAnimationFrame(animate);
         }
