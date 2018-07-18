@@ -140,12 +140,12 @@
         });
         enterVRButton.on('hide', function () {
             document.getElementById('ui').style.display = 'none';
-            camera.position.set(0, 1000, 3000);
+            camera.position.set(100, 1000, 3000);
             controls.enabled = false;
         });
         enterVRButton.on('show', function () {
             document.getElementById('ui').style.display = 'inherit';
-            camera.position.set(0, 1000, 3000);
+            camera.position.set(100, 1000, 3000);
             
         });
         document.getElementById('vr-button').appendChild(enterVRButton.domElement);
@@ -169,8 +169,7 @@
 
             if (enterVRButton.isPresenting()) {
                 controls.update();
-                camera.position.set(0, 500, 3000);
-                effect.render(scene, camera);
+                camera.position.set(100, 1000, 3000);
             }
             else {
                 Orcontrols.update();
