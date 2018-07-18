@@ -98,9 +98,9 @@
         var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 7000);
         camera.position.set(100, 1000, 3000);
 
-        //var controls = new THREE.OrbitControls(camera);
-        //controls.target.set(0, 100, 0);
-        //controls.update();
+        var controls = new THREE.OrbitControls(camera);
+        controls.target.set(0, 100, 0);
+        controls.update();
 
         var light = new THREE.HemisphereLight(0x444444, 0xffffff);
         light.position.set(0, 200, 0);
