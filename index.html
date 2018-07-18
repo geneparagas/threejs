@@ -68,14 +68,13 @@
         var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 9000);
         camera.position.set(100, 1000, 9000);
 
+        var controls = new THREE.OrbitControls(camera);
+        controls.target.set(0, 100, 0);
+        controls.update();
+        
         var controls = new THREE.VRControls(camera);
         controls.standing = true;
         camera.position.y = controls.userHeight;
-
-        var controls = new THREE.OrbitControls(camera);
-        controls.target.set(0, 100, 0);
-        //controls.update();
-
 
         var light = new THREE.HemisphereLight(0xffffff, 0x444444);
         light.position.set(0, 200, 0);
