@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <title>vr test</title>
@@ -65,53 +65,76 @@
         var scene = new THREE.Scene();
         scene.background = new THREE.Color(0xe9e9e9);
 
-        var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 9000);
-        camera.position.set(100, 1000, 3000);
-
-        var Orcontrols = new THREE.OrbitControls(camera);
-        Orcontrols.target.set(0, 100, 0);
-        Orcontrols.update();
+        var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 12000);
+        camera.position.set(100, 1000, 9000);
 
         var controls = new THREE.VRControls(camera);
         controls.standing = true;
-        camera.position.y = controls.userHeight;
 
-        var light = new THREE.HemisphereLight(0x444444,0xffffff);
+        //var controls = new THREE.OrbitControls(camera);
+        //controls.target.set(0, 100, 0);
+        //controls.update();
+
+        var light = new THREE.HemisphereLight(0xffffff, 0x444444);
         light.position.set(0, 200, 0);
         scene.add(light);
 
         var light = new THREE.DirectionalLight(0xffffff);
         light.position.set(0, 290, 100);
-        light.castShadow = false;
+        light.castShadow = true;
         light.shadow.camera.top = 1080;
         light.shadow.camera.bottom = -100;
         light.shadow.camera.left = -1520;
         light.shadow.camera.right = 3020;
         scene.add(light);
 
-        //scene.add(new THREE.CameraHelper(light.shadow.camera));
-
-
-        var mesh = new THREE.Mesh(new THREE.PlaneBufferGeometry(2000, 2000), new THREE.MeshPhongMaterial({ color: 0xffffff, depthWrite: false }));
+        var mesh = new THREE.Mesh(new THREE.PlaneBufferGeometry(6000, 6000), new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false }));
         mesh.rotation.x = - Math.PI / 2;
         mesh.receiveShadow = true;
         scene.add(mesh);
 
-        var grid = new THREE.GridHelper(2000, 20, 0x000000, 0x000000);
+        var grid = new THREE.GridHelper(6000, 20, 0x000000, 0x000000);
         grid.material.opacity = 0.2;
         grid.material.transparent = true;
         scene.add(grid);
 
-        var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        renderer.setPixelRatio(window.devicePixelRatio);
-        renderer.setSize(window.innerWidth, window.innerHeight);
-
-        var effect = new THREE.VREffect(renderer);
-        effect.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
-
         var loader = new THREE.FBXLoader();
-        loader.load('models/fbx/SingaporeBuilding_NoRoof.fbx', function (object) {
+        loader.load('models/fbx/MEN 03.FBX', function (object) {
+
+            object.traverse(function (child) {
+
+                if (child.isMesh) {
+
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+
+                }
+
+            });
+
+            scene.add(object);
+
+        });
+        var loader = new THREE.FBXLoader();
+        loader.load('models/fbx/single sofa.FBX', function (object) {
+
+            object.traverse(function (child) {
+
+                if (child.isMesh) {
+
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+
+                }
+
+            });
+
+            scene.add(object);
+
+        });
+        var loader = new THREE.FBXLoader();
+        loader.load('models/fbx/men 22.FBX', function (object) {
+
 
             object.traverse(function (child) {
 
@@ -128,31 +151,40 @@
 
         });
 
+        var renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        var effect = new THREE.VREffect(renderer);
+        effect.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
         var options = {
-            color: 'black',
+            color: 'bllk',
             background: 'white',
-            corners: 'square'
+            corners: 'square',
         };
         var enterVRButton = new webvrui.EnterVRButton(renderer.domElement, options);
-        enterVRButton.on('exit', function () {
-            //camera.quaternion.set(0, 0, 0, 1);
-            camera.position.set(100, 1000, 3000);
-        });
         enterVRButton.on('hide', function () {
             document.getElementById('ui').style.display = 'none';
-            camera.position.set(0, 1000, 3000);
-            controls.enabled = false;
+            camera.position.set(100, 1000, 9000);
         });
+        enterVRButton.on('exit', function () {
+            scene.add(light);
+            camera.position.set(100, 1000, 9000);
+        });
+
         enterVRButton.on('show', function () {
             document.getElementById('ui').style.display = 'inherit';
-            camera.position.set(0, 1000, 3000);
-            
+            camera.position.set(100, 1000, 9000);
         });
         document.getElementById('vr-button').appendChild(enterVRButton.domElement);
         document.getElementById('no-vr').addEventListener('click', function () {
             enterVRButton.requestEnterFullscreen();
         });
 
+        document.getElementById('vr-button').addEventListener('click', function () {
+           
+        });
 
         var interacting;
         var pointerX = 0;
@@ -169,11 +201,7 @@
 
             if (enterVRButton.isPresenting()) {
                 controls.update();
-                camera.position.set(0, 500, 3000);
-                effect.render(scene, camera);
-            }
-            else {
-                Orcontrols.update();
+                camera.position.set(100, 1000, 3000);
             }
 
             requestAnimationFrame(animate);
@@ -182,10 +210,13 @@
         renderer.domElement.addEventListener('mousedown', onMouseDown, false);
         renderer.domElement.addEventListener('mousemove', onMouseMove, false);
         renderer.domElement.addEventListener('mouseup', onMouseUp, false);
-        renderer.shadowMap.enabled = true;
+        document.addEventListener('wheel', onDocumentMouseWheel, false);
         window.addEventListener('resize', onResize, false);
-        container.appendChild(renderer.domElement);
 
+        function onDocumentMouseWheel(event) {
+            camera.fov += event.deltaY * 0.05;
+            camera.updateProjectionMatrix();
+        }
 
         function onMouseDown(event) {
             event.preventDefault();
