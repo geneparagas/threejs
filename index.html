@@ -7,7 +7,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="description" content="View 360 photos and photospheres in virutal reality." />
+    <meta name="description" content="vr" />
     <script src="Scripts/three.js"></script>
     <script src="Scripts/js/webVR/webvr-polyfill.min.js"></script>
     <script src="Scripts/js/webVR/VRControls.js"></script>
@@ -74,14 +74,16 @@
 
         var is_mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         
-        if (is_mobile) {
-            
-            
-        } else {
-            
-        }
-
         if (navigator.getVRDevices) {
+            var controls = new THREE.VRControls(camera);
+            controls.standing = true;
+            camera.position.y = controls.userHeight;
+        } else if (is_mobile){
+            var controls = new THREE.OrbitControls(camera);
+            controls.target.set(0, 100, 0);
+            controls.update();
+            controls.enabled = false;
+
             var controls = new THREE.VRControls(camera);
             controls.standing = true;
             camera.position.y = controls.userHeight;
@@ -204,8 +206,6 @@
                 controls.update();
                 camera.position.set(10, 200, 2000);
                 effect.render(scene, camera);
-                renderer.setPixelRatio( window.devicePixelRatio );
-                renderer.setSize( window.innerWidth, window.innerHeight );
 
             }
             requestAnimationFrame(animate);
