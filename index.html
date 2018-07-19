@@ -204,6 +204,8 @@
                 controls.update();
                 camera.position.set(10, 200, 2000);
                 effect.render(scene, camera);
+                renderer.setPixelRatio( window.devicePixelRatio );
+                renderer.setSize( window.innerWidth, window.innerHeight );
 
             }
             requestAnimationFrame(animate);
