@@ -30,8 +30,8 @@
             overflow: hidden;
         }
         div{
-            width:100%;
-            height:100%;
+            width:auto;
+            height:auto;
         }
 
         #ui {
@@ -147,6 +147,18 @@
             scene.add(object);
 
         });
+        function resizeCanvasToDisplaySize(force) {
+            const canvas = renderer.domElement;
+            const width = canvas.clientWidth;
+            const height = canvas.clientHeight;
+
+            if (force || canvas.width !== width || canvas.height !== height) {
+                renderer.setSize(width, height, false);
+                camera.aspect = width / height;
+                camera.updateProjectionMatrix();
+
+            }
+        };
 
 
         var options = {
@@ -195,6 +207,7 @@
 
             }
             requestAnimationFrame(animate);
+            resizeCanvasToDisplaySize();
         }
 
         renderer.domElement.addEventListener('mousedown', onMouseDown, false);
