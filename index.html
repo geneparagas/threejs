@@ -119,22 +119,14 @@
         grid.material.transparent = true;
         scene.add(grid);
 
-        var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        var renderer = new THREE.WebGLRenderer();
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize(window.innerWidth, window.innerHeight);
 
         var effect = new THREE.VREffect(renderer);
         effect.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
-        
-        function VRFrameData () {
-  this.leftViewMatrix = new Float32Array(16);
-  this.rightViewMatrix = new Float32Array(16);
-  this.leftProjectionMatrix = new Float32Array(16);
-  this.rightProjectionMatrix = new Float32Array(16);
-  this.pose = null;
-};
-
+       
         var loader = new THREE.FBXLoader();
         loader.load('models/fbx/SingaporeBuilding_NoRoof.fbx', function (object) {
 
@@ -207,7 +199,6 @@
 
             if (enterVRButton.isPresenting()) {
                 controls.update();
-                camera.updateMatrixWorld();
                 camera.position.set(100, 200, 1500);
                 effect.render(scene, camera);
 
