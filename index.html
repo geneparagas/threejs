@@ -207,6 +207,7 @@
 
             if (enterVRButton.isPresenting()) {
                 controls.update();
+                camera.updateMatrixWorld();
                 camera.position.set(100, 200, 1500);
                 effect.render(scene, camera);
 
