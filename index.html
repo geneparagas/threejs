@@ -126,6 +126,14 @@
         var effect = new THREE.VREffect(renderer);
         effect.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
+        
+        function VRFrameData () {
+  this.leftViewMatrix = new Float32Array(16);
+  this.rightViewMatrix = new Float32Array(16);
+  this.leftProjectionMatrix = new Float32Array(16);
+  this.rightProjectionMatrix = new Float32Array(16);
+  this.pose = null;
+};
 
         var loader = new THREE.FBXLoader();
         loader.load('models/fbx/SingaporeBuilding_NoRoof.fbx', function (object) {
