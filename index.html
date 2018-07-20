@@ -7,7 +7,8 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="description" content="vr" />
+    <meta name="description" content="VR" />
+    <link href="Content/all.css" rel="stylesheet">
     <script src="Scripts/three.js"></script>
     <script src="Scripts/js/webVR/webvr-polyfill.min.js"></script>
     <script src="Scripts/js/webVR/VRControls.js"></script>
@@ -29,16 +30,25 @@
             overflow: hidden;
         }
 
-        div {
-            width: auto;
-            height: auto;
+        canvas {
+            cursor: move; /* fallback if grab cursor is unsupported */
+            cursor: grab;
+            cursor: -moz-grab;
+            cursor: -webkit-grab;
+            width: 100% !important;
+            height: 100% !important;
         }
+
+            canvas:active {
+                cursor: grabbing;
+                cursor: -moz-grabbing;
+                cursor: -webkit-grabbing;
+            }
 
         #ui {
             position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            top: 1%;
+            left: 1%;
             text-align: center;
             font-family: 'Karla', sans-serif;
             z-index: 1;
@@ -46,23 +56,50 @@
 
         a#no-vr {
             display: block;
-            color: red;
-            margin-top: 1em;
+            color: #757575;
+            font-size: 20px;
         }
+
+        .webvr-ui-button {
+            min-width: 0 !important;
+            text-align: center;
+            height: auto !important;
+            padding: 5px;
+            border-radius: 0 !important;
+            border: 0 !important;
+            background: none !important;
+        }
+
+        .webvr-ui-title {
+            display: none !important
+        }
+
+        .webvr-ui-logo {
+            width: 100% !important;
+            height: auto !important;
+            position: relative !important;
+        }
+
+        .webvr-ui-svg-error, .webvr-ui-svg {
+            margin: 0 !important;
+        }
+
         #loading-screen {
             position: absolute;
             z-index: 2;
             top: 0;
             left: 0;
             width: 100%;
-            background-color: #000;
+            background-color: #17C5CB;
             height: 100%;
             opacity: 1;
-            transition: 1s opacity;
+            transition: 2s opacity;
         }
 
             #loading-screen.fade-out {
                 opacity: 0;
+                z-index: 0;
+                display: none;
             }
 
         #loader {
@@ -72,7 +109,6 @@
             top: 50%;
             width: 150px;
             height: 150px;
-
         }
 
             #loader:after {
@@ -111,7 +147,7 @@
     </div>
     <div id="ui">
         <div id="vr-button"></div>
-        <a id="no-vr" href="#">Try without a headset</a>
+        <a id="no-vr" href="#"><i class="fas fa-expand"></i></a>
     </div>
     <script>
         if (!Detector.webgl) Detector.addGetWebGLMessage();
@@ -337,3 +373,4 @@
     </script>
 </body>
 </html>
+
