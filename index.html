@@ -66,19 +66,45 @@
 
         var mixers = [];
 
+        var loadingScreen = {
+            scene: new THREE.Scene(),
+            camera: new THREE.PerspectiveCamera(90, 1280 / 720, 0.1, 100),
+            box: new THREE.Mesh(
+                new THREE.BoxGeometry(0.5, 0.5, 0.5),
+                new THREE.MeshBasicMaterial({ color: 0x4444ff })
+            )
+        };
+        loadingScreen.box.position.set(0, 0, 5);
+        loadingScreen.camera.lookAt(loadingScreen.box.position);
+        loadingScreen.scene.add(loadingScreen.box);
+
+        var loadingManager = null;
+        var RESOURCES_LOADED = false;
+
+        var loadingManager = new THREE.LoadingManager();
+
+        loadingManager.onProgress = function (item, loaded, total) {
+            console.log(item, loaded, total);
+        };
+
+        loadingManager.onLoad = function () {
+            console.log("loaded all resources");
+            RESOURCES_LOADED = true;
+        };
+
         var scene = new THREE.Scene();
         scene.background = new THREE.Color(0xe9e9e9);
 
-        var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 9000);
+        var camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 1, 9000);
         camera.position.set(100, 200, 3000);
 
         var is_mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        
+
         if (navigator.getVRDevices) {
             var controls = new THREE.VRControls(camera);
             controls.standing = true;
             camera.position.y = controls.userHeight;
-        } else if (is_mobile){
+        } else if (is_mobile) {
             var controls = new THREE.VRControls(camera);
             controls.standing = true;
             camera.position.y = controls.userHeight;
@@ -93,7 +119,7 @@
             camera.position.y = controls.userHeight;
         }
 
-        var light = new THREE.HemisphereLight(0x444444,0xffffff);
+        var light = new THREE.HemisphereLight(0x444444, 0xffffff);
         light.position.set(0, 200, 0);
         scene.add(light);
 
@@ -106,8 +132,8 @@
         light.shadow.camera.right = 3020;
         scene.add(light);
 
-        //scene.add(new THREE.CameraHelper(light.shadow.camera));
 
+        //scene.add(new THREE.CameraHelper(light.shadow.camera));
 
         var mesh = new THREE.Mesh(new THREE.PlaneBufferGeometry(2000, 2000), new THREE.MeshPhongMaterial({ color: 0xffffff, depthWrite: false }));
         mesh.rotation.x = - Math.PI / 2;
@@ -126,9 +152,9 @@
         var effect = new THREE.VREffect(renderer);
         effect.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
-       
-        var loader = new THREE.FBXLoader();
-        loader.load('models/fbx/SingaporeBuilding_NoRoof.fbx', function (object) {
+
+        var loader = new THREE.FBXLoader(loadingManager);
+        loader.load('https://geneparagas.github.io/threejs/models/fbx/SingaporeBuilding_NoRoof.fbx', function (object) {
 
             object.traverse(function (child) {
 
@@ -144,18 +170,6 @@
             scene.add(object);
 
         });
-        function resizeCanvasToDisplaySize(force) {
-            const canvas = renderer.domElement;
-            const width = canvas.clientWidth;
-            const height = canvas.clientHeight;
-
-            if (force || canvas.width !== width || canvas.height !== height) {
-                renderer.setSize(width, height, false);
-                camera.aspect = width / height;
-                camera.updateProjectionMatrix();
-
-            }
-        };
 
 
         var options = {
@@ -175,7 +189,7 @@
         enterVRButton.on('show', function () {
             document.getElementById('ui').style.display = 'inherit';
             camera.position.set(100, 200, 3000);
-            
+
         });
         document.getElementById('vr-button').appendChild(enterVRButton.domElement);
         document.getElementById('no-vr').addEventListener('click', function () {
@@ -192,19 +206,45 @@
         var savedLat = 0;
         var savedLng = 0;
 
+        resizeCanvasToDisplaySize(true);
+
+        function resizeCanvasToDisplaySize(force) {
+            const canvas = renderer.domElement;
+            const width = canvas.clientWidth;
+            const height = canvas.clientHeight;
+
+            if (force || canvas.width !== width || canvas.height !== height) {
+                renderer.setSize(width, height, false);
+                camera.aspect = width / height;
+                camera.updateProjectionMatrix();
+
+            }
+        }
+
         animate();
 
         function animate() {
             effect.render(scene, camera);
+            if (RESOURCES_LOADED == false) {
+                requestAnimationFrame(animate);
+
+                loadingScreen.box.position.x -= 0.05;
+                if (loadingScreen.box.position.x < -10) loadingScreen.box.position.x = 10;
+                loadingScreen.box.position.y = Math.sin(loadingScreen.box.position.x);
+
+                renderer.render(loadingScreen.scene, loadingScreen.camera);
+                return; // Stop the function here.
+            }
 
             if (enterVRButton.isPresenting()) {
                 controls.update();
-                camera.position.set(100, 200, 1500);
+                camera.updateMatrixWorld();
+                camera.position.set(100, 200, 2000);
                 effect.render(scene, camera);
 
             }
-            requestAnimationFrame(animate);
             resizeCanvasToDisplaySize();
+            requestAnimationFrame(animate);
         }
 
         renderer.domElement.addEventListener('mousedown', onMouseDown, false);
