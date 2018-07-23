@@ -189,11 +189,6 @@
 
         var is_mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-        if (navigator.getVRDevices) {
-            var controls = new THREE.VRControls(camera);
-            controls.standing = true;
-            camera.position.y = controls.userHeight;
-        } else if (is_mobile) {
             var controls = new THREE.VRControls(camera);
             controls.standing = true;
             camera.position.y = controls.userHeight;
@@ -201,16 +196,7 @@
             var orcontrols = new THREE.OrbitControls(camera);
             orcontrols.target.set(0, 100, 0);
             orcontrols.update();
-        }
-        else {
-            var controls = new THREE.OrbitControls(camera);
-            controls.target.set(0, 100, 0);
-            controls.update();
-
-            var controls = new THREE.VRControls(camera);
-            controls.standing = true;
-            camera.position.y = controls.userHeight;
-        }
+       
 
         var light = new THREE.HemisphereLight(0x444444, 0xffffff);
         light.position.set(0, 200, 0);
@@ -333,6 +319,7 @@
                 effect.render(scene, camera);
 
             }
+            orcontrols.update();
             resizeCanvasToDisplaySize();
             requestAnimationFrame(animate);
         }
