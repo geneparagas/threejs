@@ -146,6 +146,7 @@
     <div id="ui">
         <div id="vr-button"></div>
         <a id="no-vr" href="#"><i class="fas fa-expand"></i></a>
+        <button id="controla" type="button" class="btn btn-default">1st</button>
         <button id="controlb" type="button" class="btn btn-default">3rd</button>
     </div>
     <script>
@@ -198,6 +199,16 @@
             var controls = new THREE.VRControls(camera);
             controls.standing = true;
             camera.position.y = controls.userHeight;
+
+            $('button#controlb').addClass('active');
+
+            $('button#controla').click(function () {
+                if (!$('button#controla').hasClass('active')) {
+                    $('button#controla').addClass('active');
+                    $('button#controlb').removeClass('active');
+
+                }
+            });
 
             $('button#controlb').click(function () {
                 if (!$('button#controlb').hasClass('active')) {
