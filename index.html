@@ -198,9 +198,9 @@
             controls.standing = true;
             camera.position.y = controls.userHeight;
 
-            var controls = new THREE.OrbitControls(camera);
-            controls.target.set(0, 100, 0);
-            controls.update();
+            var orcontrols = new THREE.OrbitControls(camera);
+            orcontrols.target.set(0, 100, 0);
+            orcontrols.update();
         }
         else {
             var controls = new THREE.OrbitControls(camera);
