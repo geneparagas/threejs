@@ -93,7 +93,7 @@
             background-color: #17C5CB;
             height: 100%;
             opacity: 1;
-            transition: 2s opacity;
+            transition: 3s opacity;
         }
 
             #loading-screen.fade-out {
@@ -197,6 +197,10 @@
             var controls = new THREE.VRControls(camera);
             controls.standing = true;
             camera.position.y = controls.userHeight;
+
+            var controls = new THREE.OrbitControls(camera);
+            controls.target.set(0, 100, 0);
+            controls.update();
         }
         else {
             var controls = new THREE.OrbitControls(camera);
@@ -325,8 +329,9 @@
             if (enterVRButton.isPresenting()) {
                 controls.update();
                 camera.updateMatrixWorld();
-                camera.position.set(40, 200, 2000);
+                camera.position.set(0, 200, 2000);
                 effect.render(scene, camera);
+
             }
             resizeCanvasToDisplaySize();
             requestAnimationFrame(animate);
