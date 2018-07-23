@@ -146,8 +146,6 @@
     <div id="ui">
         <div id="vr-button"></div>
         <a id="no-vr" href="#"><i class="fas fa-expand"></i></a>
-        <button id="controla" type="button" class="btn btn-default">1st</button>
-        <button id="controlb" type="button" class="btn btn-default">3rd</button>
     </div>
     <script>
         if (!Detector.webgl) Detector.addGetWebGLMessage();
@@ -200,23 +198,9 @@
             controls.standing = true;
             camera.position.y = controls.userHeight;
 
-            $('button#controlb').addClass('active');
-
-            $('button#controla').click(function () {
-                if (!$('button#controla').hasClass('active')) {
-                    $('button#controla').addClass('active');
-                    $('button#controlb').removeClass('active');
-
-                }
-            });
-
-            $('button#controlb').click(function () {
-                if (!$('button#controlb').hasClass('active')) {
-                    var orcontrols = new THREE.OrbitControls(camera);
-                    orcontrols.target.set(0, 100, 0);
-                    orcontrols.update();
-                }
-            });
+            var orcontrols = new THREE.OrbitControls(camera);
+            orcontrols.target.set(0, 100, 0);
+            orcontrols.update();
         }
         else {
             var controls = new THREE.OrbitControls(camera);
@@ -227,8 +211,6 @@
             controls.standing = true;
             camera.position.y = controls.userHeight;
         }
-
-        
 
         var light = new THREE.HemisphereLight(0x444444, 0xffffff);
         light.position.set(0, 200, 0);
