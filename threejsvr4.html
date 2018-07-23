@@ -1,505 +1,244 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
-    <link href="Content/bootstrap.css" rel="stylesheet" />
-    <link href="Content/bootstrap.min.css" rel="stylesheet" />
-    <link href="Content/bootstrap-social.css" rel="stylesheet" />
-    <link href="Content/owl.carousel.css" rel="stylesheet" />
-    <link href="Content/owl.theme.default.css" rel="stylesheet" />
-    <link href="Content/all.css" rel="stylesheet">
+    <title>VR</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0, shrink-to-fit=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="description" content="VR" />
     <script src="Scripts/three.js"></script>
-    <script src="Scripts/js/webVR/webvr-polyfill.min.js"></script>
+    <script src="https://immersive-web.github.io/webvr-polyfill/build/webvr-polyfill.js"></script>
     <script src="Scripts/js/webVR/VRControls.js"></script>
     <script src="Scripts/js/webVR/VREffect.js"></script>
-    <script src="Scripts/js/webVR/webvr-ui.min.js"></script>
 
-    <script src="Scripts/js/libs/inflate.min.js"></script>
-    <script src="Scripts/js/loaders/FBXLoader.js"></script>
     <script src="Scripts/js/controls/OrbitControls.js"></script>
-    <script src="Scripts/js/Detector.js"></script>
     <style type="text/css">
+        html, body {
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            color: #fff;
+            margin: 0px;
+            padding: 0;
+            overflow: hidden;
+        }
 
         canvas {
-            cursor: move; /* fallback if grab cursor is unsupported */
-            cursor: grab;
-            cursor: -moz-grab;
-            cursor: -webkit-grab;
-            width: 100% !important;
-            height: 100% !important;
-        }
-
-            canvas:active {
-                cursor: grabbing;
-                cursor: -moz-grabbing;
-                cursor: -webkit-grabbing;
-            }
-
-        #ui {
-            position: absolute;
-            top: 1%;
-            left: 1%;
-            text-align: center;
-            font-family: 'Karla', sans-serif;
-            z-index: 1;
-        }
-
-        a#no-vr {
-            display: block;
-            color: #757575;
-            font-size:20px;
-        }
-
-        .webvr-ui-button {
-            min-width: 0 !important;
-            text-align: center;
-            height: auto !important;
-            padding: 5px;
-            border-radius: 0 !important;
-            border:0 !important;
-            background:none !important;
-        }
-
-        .webvr-ui-title {
-            display: none !important
-        }
-
-        .webvr-ui-logo {
-            width: 100% !important;
-            height: auto !important;
-            position: relative !important;
-        }
-
-        .webvr-ui-svg-error, .webvr-ui-svg {
-            margin: 0 !important;
-        }
-
-        #loading-screen {
-            position: absolute;
-            z-index: 2;
-            top: 0;
-            left: 0;
             width: 100%;
-            background-color: #17C5CB;
             height: 100%;
-            opacity: 1;
-            transition: 1s opacity;
         }
 
-            #loading-screen.fade-out {
-                opacity: 0;
-                z-index:0;
-                display:none;
-            }
-
-        #loader {
-            display: block;
-            position: absolute;
-            left: 0;
+        #buttons {
+            position: fixed;
+            top: 0;
             right: 0;
-            margin: 0 auto;
-            top: 40%;
-            text-align: center;
-            width: 100px;
-            height: 100px;
-        }
-
-            #loader:after {
-                content: " ";
-                display: block;
-                border-radius: 50%;
-                width: 0;
-                height: 0;
-                margin: 6px;
-                box-sizing: border-box;
-                border: 46px solid #fff;
-                border-color: #fff transparent #fff transparent;
-                animation: lds-hourglass 1.2s infinite;
-            }
-
-        @keyframes lds-hourglass {
-            0% {
-                transform: rotate(0);
-                animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
-            }
-
-            50% {
-                transform: rotate(900deg);
-                animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
-            }
-
-            100% {
-                transform: rotate(1800deg);
-            }
+            z-index: 1;
+            background: white;
         }
     </style>
 </head>
-<body class="custom-mobile">
-    <nav class="navbar navbar-expand-md navbar-light custom-navi pl-3 pr-3 p-0" style="background-color:#fff;box-shadow: 0 2px 2px -2px rgba(0,0,0,.2);">
-        <a class="navbar-brand" href="default.html"><img src="img/logo_01.png" width="150" /></a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse custom-menu" id="navbarCollapse">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item pt-2 pb-2">
-                    <a class="nav-link" href="Login.html">注册</a>
-                </li>
-                <li class="nav-item pt-2 pb-2">
-                    <a class="nav-link" href="Login.html">登录</a>
-                </li>
-                <li class="nav-item pt-2 pb-2">
-                    <a class="nav-link" href="CategoryPage.html">浏览</a>
-                </li>
-                <li class="nav-item pt-2 pb-2">
-                    <a class="nav-link" href="Product2D.html">2D户型</a>
-                </li>
-                <li class="nav-item active pt-2 pb-2">
-                    <a class="nav-link" href="ProductVr.html">
-                        VR户型
-                    </a>
-                </li>
-            </ul>
-            <form class="form-inline my-2 my-md-0">
-                <div class="row">
-                    <div class="col-6"><button type="button" class="btn" style="border:1px solid #17C5CB;background:#fff;color:#17C5CB">琦创户型PC端</button></div>
-                    <div class="col-6"><button type="button" class="btn" style="border:1px solid #17C5CB;background:#fff;color:#17C5CB">琦创师PC端</button></div>
-                </div>
-            </form>
-        </div>
-    </nav>
-    <div class="container" style="margin-top:10px;">
-        <div class="row">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb remove-background">
-                    <li class="breadcrumb-item"><a href="default.html" style="color:#17C5CB">首页</a></li>
-                    <li class="breadcrumb-item"><a href="CreateEntry.html" style="color:#17C5CB">中国</a></li>
-                    <li class="breadcrumb-item"><a href="CreateEntry.html" style="color:#17C5CB">潮州</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">VR户型图</li>
-                </ol>
-            </nav>
-        </div>
+<body>
+    <div id="buttons">
+        <button id="fullscreen">Fullscreen</button>
+        <button id="vr">VR (WebVR/Mobile only)</button>
     </div>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-2 d-flex flex-column temp-remove">
-                <div>
-                    <ul class="text-secondary ch" style="list-style-type: none;padding-left:0;">
-                        <li style="margin-bottom:2%">2D户型</li>
-                        <li style="margin-bottom:2%"><strong>房地产信息</strong></li>
-                        <li>户型测评</li>
-                    </ul>
-                </div>
-                <div class="mt-auto">
-                    <div class="mb-2">
-                        查看全部VR户型 <i class="fas fa-chevron-right" style="color:#17C5CB"></i>
-                    </div>
-                    <div class="mb-1"><img class="img-fluid mx-auto d-block" src="img/vr-1.PNG"></div>
-                    <div class="mb-1"><img class="img-fluid mx-auto d-block" src="img/vr-2.PNG"></div>
-                    <div><img class="img-fluid mx-auto d-block" src="img/vr-3.PNG"></div>
-                </div>
-            </div>
-            <div class="col-md-6 remove-padding-mobile remove-padding-left" id="canvas" style="height:400px">
-                <div id="loading-screen">
-                    <div id="loader"></div>
-                </div>
-                <div id="ui">
-                    <div id="vr-button"></div>
-                    <a id="no-vr" href="#"><i class="fas fa-expand"></i></a>
-                </div>
-                    <script>
-                        if (!Detector.webgl) Detector.addGetWebGLMessage();
-
-                        container = document.getElementById('canvas');
-
-                        var clock = new THREE.Clock();
-
-                        var mixers = [];
-
-                        var loadingScreen = {
-                            scene: new THREE.Scene(),
-                            camera: new THREE.PerspectiveCamera(90, 1280 / 720, 0.1, 100),
-                        };
-
-                        var loadingManager = null;
-                        var RESOURCES_LOADED = false;
-
-                        var loadingManager = new THREE.LoadingManager();
-
-                        loadingManager.onProgress = function (item, loaded, total) {
-                            console.log(item, loaded, total);
-                            const loadingScreen = document.getElementById('loading-screen');
-                            loadingScreen.classList.add('fade-out');
-
-                            const loading = document.getElementById('loader');
-                            loading.style.display = 'none';
-
-                        };
-                        loadingManager.onLoad = function () {
-                            console.log("loaded all resources");
-                            RESOURCES_LOADED = true;
-                        };
-
-                        var scene = new THREE.Scene();
-                        scene.background = new THREE.Color(0xe9e9e9);
-
-                        var camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 1, 9000);
-                        camera.position.set(100, 400, 4000);
-
-                        var is_mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
-                        if (navigator.getVRDevices) {
-                            var controls = new THREE.VRControls(camera);
-                            controls.standing = true;
-                            camera.position.y = controls.userHeight;
-                        } else if (is_mobile) {
-                            var controls = new THREE.VRControls(camera);
-                            controls.standing = true;
-                            camera.position.y = controls.userHeight;
-                        }
-                        else {
-                            var controls = new THREE.OrbitControls(camera, document.getElementById("canvas"));
-                            controls.target.set(0, 100, 0);
-                            controls.update();
-
-                            var controls = new THREE.VRControls(camera);
-                            controls.standing = true;
-                            camera.position.y = controls.userHeight;
-                        }
-
-                        var light = new THREE.HemisphereLight(0x444444, 0xffffff);
-                        light.position.set(0, 200, 0);
-                        scene.add(light);
-
-                        var light = new THREE.DirectionalLight(0xffffff);
-                        light.position.set(0, 290, 100);
-                        light.castShadow = false;
-                        light.shadow.camera.top = 1080;
-                        light.shadow.camera.bottom = -100;
-                        light.shadow.camera.left = -1520;
-                        light.shadow.camera.right = 3020;
-                        scene.add(light);
-
-
-                        //scene.add(new THREE.CameraHelper(light.shadow.camera));
-
-                        //var mesh = new THREE.Mesh(new THREE.PlaneBufferGeometry(2000, 2000), new THREE.MeshPhongMaterial({ color: 0xffffff, depthWrite: false }));
-                        //mesh.rotation.x = - Math.PI / 2;
-                        //mesh.receiveShadow = true;
-                        //scene.add(mesh);
-
-                        //var grid = new THREE.GridHelper(2000, 20, 0x000000, 0x000000);
-                        //grid.material.opacity = 0.2;
-                        //grid.material.transparent = true;
-                        //scene.add(grid);
-
-                        var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-                        renderer.setPixelRatio(window.devicePixelRatio);
-                        renderer.setSize(window.innerWidth, window.innerHeight);
-
-                        var effect = new THREE.VREffect(renderer);
-                        effect.setSize(window.innerWidth, window.innerHeight);
-                        document.body.appendChild(renderer.domElement);
-
-                        var loader = new THREE.FBXLoader(loadingManager);
-                        loader.load('models/fbx/SingaporeBuilding_NoRoof.fbx', function (object) {
-
-                            object.traverse(function (child) {
-
-                                if (child.isMesh) {
-
-                                    child.castShadow = true;
-                                    child.receiveShadow = true;
-
-                                }
-
-                            });
-
-                            scene.add(object);
-
-                        });
-
-
-                        var options = {
-                            color: 'black',
-                            background: 'white',
-                            corners: 'square'
-                        };
-                        var enterVRButton = new webvrui.EnterVRButton(renderer.domElement, options);
-                        enterVRButton.on('exit', function () {
-                            camera.quaternion.set(0, 0, 0, 1);
-                            camera.position.set(100, 400, 4000);
-                        });
-                        enterVRButton.on('hide', function () {
-                            document.getElementById('ui').style.display = 'none';
-                            camera.position.set(100, 400, 4000);
-                        });
-                        enterVRButton.on('show', function () {
-                            document.getElementById('ui').style.display = 'inherit';
-                            camera.position.set(100, 400, 4000);
-
-                        });
-                        document.getElementById('vr-button').appendChild(enterVRButton.domElement);
-                        document.getElementById('no-vr').addEventListener('click', function () {
-                            enterVRButton.requestEnterFullscreen();
-                            camera.position.set(100, 400, 4000);
-                        });
-
-
-                        var interacting;
-                        var pointerX = 0;
-                        var pointerY = 0;
-                        var lat = 0;
-                        var lng = 0;
-                        var savedLat = 0;
-                        var savedLng = 0;
-
-                        resizeCanvasToDisplaySize(true);
-
-                        function resizeCanvasToDisplaySize(force) {
-                            const canvas = renderer.domElement;
-                            const width = canvas.clientWidth;
-                            const height = canvas.clientHeight;
-
-                            if (force || canvas.width !== width || canvas.height !== height) {
-                                renderer.setSize(width, height, false);
-                                camera.aspect = width / height;
-                                camera.updateProjectionMatrix();
-
-                            }
-                        }
-
-                        animate();
-
-                        function animate() {
-                            effect.render(scene, camera);
-                            if (RESOURCES_LOADED == false) {
-                                requestAnimationFrame(animate);
-
-
-                                renderer.render(loadingScreen.scene, loadingScreen.camera);
-                                return; // Stop the function here.
-                            }
-
-                            if (enterVRButton.isPresenting()) {
-                                controls.update();
-                                camera.updateMatrixWorld();
-                                camera.position.set(100, 200, 2000);
-                                effect.render(scene, camera);
-
-                            }
-                            resizeCanvasToDisplaySize();
-                            requestAnimationFrame(animate);
-                        }
-
-                        renderer.domElement.addEventListener('mousedown', onMouseDown, false);
-                        renderer.domElement.addEventListener('mousemove', onMouseMove, false);
-                        renderer.domElement.addEventListener('mouseup', onMouseUp, false);
-                        renderer.shadowMap.enabled = true;
-                        window.addEventListener('resize', onResize, false);
-                        container.appendChild(renderer.domElement);
-
-
-                        function onMouseDown(event) {
-                            event.preventDefault();
-                            interacting = true;
-                            pointerX = event.clientX;
-                            pointerY = event.clientY;
-                            savedLng = lng;
-                            savedLat = lat;
-                        }
-
-                        function onMouseMove(event) {
-                            if (interacting) {
-                                lng = (pointerX - event.clientX) * 0.1 + savedLng;
-                                lat = (pointerY - event.clientY) * 0.1 + savedLat;
-                            }
-                        }
-
-                        function onMouseUp(event) {
-                            event.preventDefault();
-                            interacting = false;
-                        }
-
-                        function onResize() {
-                            effect.setSize(window.innerWidth, window.innerHeight);
-                            camera.aspect = window.innerWidth / window.innerHeight;
-                            camera.updateProjectionMatrix();
-                        }
-                    </script>
-            </div>
-                <div class="col-md-4 bg-white p-2 d-flex flex-column">
-                    <div class="p-2">
-                        <h4>
-                            北京金科天籁城2室1厅1卫1厨90.00㎡户型图
-                        </h4>
-
-                        <ul class="text-secondary" style="list-style-type: none;padding-left:0">
-                            <li>建筑面积： 90平方米 户型图报错</li>
-                            <li>套内面积： 63.12平方米</li>
-                            <li> 楼盘信息： 北京 北京金科天籁城</li>
-                            <li>更新日期： 2015-02-15</li>
-                        </ul>
-                    </div>
-                    <div class="mt-auto">
-                        <div class="container">
-                            <div class="row p-2" style="background:#F0F3F8;margin-bottom:2%">
-                                <div class="col-6" style="color:#949BB0"><i class="fas fa-download" style="color:#17C5CB"></i> 下载到我的手机</div>
-                                <div class="col-6 text-right" style="color:#949BB0"><i class="fas fa-share-alt" style="color:#17C5CB"></i> 分享</div>
-                            </div>
-                        </div>
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-4 button-cat pl-0">
-                                    <button type="button" class="popper btn btn-primary btn-block" data-toggle="popover" data-placement="top" style="background:#17C5CB;border-color:#17C5CB">扫描QR码</button>
-                                    <div class="popper-content hide" style="display:none"><img src="img/QRCode.png" width="100" /></div>
-                                </div>
-                                <div class="col-4 button-cat">
-                                    <button type="button" class="popper btn btn-primary btn-block" data-toggle="popover" data-placement="top" style="background:#17C5CB;border-color:#17C5CB">URL</button>
-                                    <div class="popper-content hide" style="display:none">
-                                        <form>
-                                            <div class="input-group">
-                                                <input type="text" class="form-control"
-                                                       value="/bookfloorplan.com/property/" placeholder="Some path" id="copy-input">
-                                                <span class="input-group-btn">
-                                                    <button class="btn btn-primary" data-clipboard-text="1" style="background:#17C5CB;border-color:#17C5CB">Click me</button>
-                                                </span>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                                <div class="col-4 button-cat pr-0"><button type="button" class="btn btn-outline-secondary btn-block">下载户型图</button></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-    </div>
-    <script src="Scripts/jquery-3.0.0.min.js"></script>
-    <script src="Scripts/popper2.min.js"></script>
-    <script src="Scripts/owl.carousel.js"></script>
-    <script src="Scripts/bootstrap.js"></script>
     <script>
-        $('.popper').popover({
-            container: 'body',
-            html: true,
-            trigger: 'focus',
-            content: function () {
-                return $(this).next('.popper-content').html();
+        document.addEventListener('touchmove', function (e) {
+            e.preventDefault();
+        });
+    </script>
+        <script>
+            // Get config from URL
+            var config = (function() {
+      var config = {};
+            var q = window.location.search.substring(1);
+      if (q === '') {
+        return config;
+          }
+          var params = q.split('&');
+          var param, name, value;
+      for (var i = 0; i < params.length; i++) {
+                param = params[i].split('=');
+            name = param[0];
+            value = param[1];
+
+            // All config values are either boolean or float
+            config[name] = value === 'true' ? true :
+                           value === 'false' ? false :
+                           parseFloat(value);
+          }
+          return config;
+        })();
+
+        var polyfill = new WebVRPolyfill(config);
+
+        console.log("Using webvr-polyfill version " + WebVRPolyfill.version +
+                    " with configuration: " + JSON.stringify(config));
+            var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setPixelRatio(Math.floor(window.devicePixelRatio));
+
+        // Append the canvas element created by the renderer to document body element.
+        var canvas = renderer.domElement;
+        document.body.appendChild(canvas);
+
+        // Create a three.js scene.
+        var scene = new THREE.Scene();
+
+        // Create a three.js camera.
+        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
+
+        // Create a reticle
+        var reticle = new THREE.Mesh(
+          new THREE.RingBufferGeometry(0.005, 0.01, 15),
+      new THREE.MeshBasicMaterial({color: 0xffffff })
+          );
+          reticle.position.z = -0.5;
+          camera.add(reticle);
+          scene.add(camera);
+
+          // Apply VR stereo rendering to renderer.
+          var effect = new THREE.VREffect(renderer);
+          effect.setSize(canvas.clientWidth, canvas.clientHeight, false);
+
+          var vrDisplay, controls;
+
+          // Add a repeating grid as a skybox.
+          var boxWidth = 5;
+
+          // Create 3D objects.
+          var geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+          var material = new THREE.MeshNormalMaterial();
+          var cube = new THREE.Mesh(geometry, material);
+
+          // Position cube
+          cube.position.z = -1;
+
+          // Add cube mesh to your three.js scene
+          scene.add(cube);
+
+          // Load the skybox texture and cube
+          var loader = new THREE.TextureLoader();
+            loader.load('https://immersive-web.github.io/webvr-polyfill/examples/img/box.png', onTextureLoaded);
+function onTextureLoaded(texture) {
+                texture.wrapS = THREE.RepeatWrapping;
+            texture.wrapT = THREE.RepeatWrapping;
+            texture.repeat.set(boxWidth, boxWidth);
+            var geometry = new THREE.BoxGeometry(boxWidth, boxWidth, boxWidth);
+      var material = new THREE.MeshBasicMaterial({
+                map: texture,
+            color: 0x01BE00,
+            side: THREE.BackSide
+          });
+          var skybox = new THREE.Mesh(geometry, material);
+          scene.add(skybox);
+        }
+
+        // The polyfill provides this in the event this browser
+        // does not support WebVR 1.1
+navigator.getVRDisplays().then(function (vrDisplays) {
+      // If we have a native display, or we have a CardboardVRDisplay
+      // from the polyfill, use it
+      if (vrDisplays.length) {
+                vrDisplay = vrDisplays[0];
+
+            // Apply VR headset positional data to camera.
+            controls = new THREE.VRControls(camera);
+
+            // Kick off the render loop.
+            vrDisplay.requestAnimationFrame(animate);
+          }
+          // Otherwise, we're on a desktop environment with no native
+          // displays, so provide controls for a monoscopic desktop view
+      else {
+                controls = new THREE.OrbitControls(camera);
+            controls.target.set(0, 0, -1);
+
+            // Disable the "Enter VR" button
+            var enterVRButton = document.querySelector('#vr');
+            enterVRButton.disabled = true;
+
+            // Kick off the render loop.
+            requestAnimationFrame(animate);
+          }
+        });
+
+        // Request animation frame loop function
+        var lastRender = 0;
+function animate(timestamp) {
+      var delta = Math.min(timestamp - lastRender, 500);
+            lastRender = timestamp;
+
+            // Apply rotation to cube mesh
+            cube.rotation.y += delta * 0.0002;
+
+            // Update VR headset position and apply to camera.
+            controls.update();
+
+            // Render the scene.
+            effect.render(scene, camera);
+
+            // Keep looping; if using a VRDisplay, call its requestAnimationFrame,
+            // otherwise call window.requestAnimationFrame.
+      if (vrDisplay) {
+                vrDisplay.requestAnimationFrame(animate);
+            } else {
+                requestAnimationFrame(animate);
             }
-        });
-        $('#main').owlCarousel({
-            loop: true,
-            margin: 10,
-            responsiveClass: true,
-            items: 1,
-            singleItem: true,
-            autoplay: true,
-            autoplayTimeout: 5000,
-            autoplayHoverPause: true
-        });
+          }
+
+function onResize() {
+      // The delay ensures the browser has a chance to layout
+      // the page and update the clientWidth/clientHeight.
+      // This problem particularly crops up under iOS.
+      if (!onResize.resizeDelay) {
+                onResize.resizeDelay = setTimeout(function () {
+                    onResize.resizeDelay = null;
+                    console.log('Resizing to %s x %s.', canvas.clientWidth, canvas.clientHeight);
+                    effect.setSize(canvas.clientWidth, canvas.clientHeight, false);
+                    camera.aspect = canvas.clientWidth / canvas.clientHeight;
+                    camera.updateProjectionMatrix();
+                }, 250);
+            }
+          }
+
+function onVRDisplayPresentChange() {
+                console.log('onVRDisplayPresentChange');
+            onResize();
+            buttons.hidden = vrDisplay.isPresenting;
+          }
+
+function onVRDisplayConnect(e) {
+                console.log('onVRDisplayConnect', (e.display || (e.detail && e.detail.display)));
+            }
+
+            // Resize the WebGL canvas when we resize and also when we change modes.
+            window.addEventListener('resize', onResize);
+            window.addEventListener('vrdisplaypresentchange', onVRDisplayPresentChange);
+            window.addEventListener('vrdisplayconnect', onVRDisplayConnect);
+
+            // Button click handlers.
+document.querySelector('button#fullscreen').addEventListener('click', function() {
+                enterFullscreen(renderer.domElement);
+            });
+document.querySelector('button#vr').addEventListener('click', function() {
+                vrDisplay.requestPresent([{ source: renderer.domElement }]);
+            });
+
+function enterFullscreen (el) {
+      if (el.requestFullscreen) {
+                el.requestFullscreen();
+            } else if (el.mozRequestFullScreen) {
+                el.mozRequestFullScreen();
+            } else if (el.webkitRequestFullscreen) {
+                el.webkitRequestFullscreen();
+            } else if (el.msRequestFullscreen) {
+                el.msRequestFullscreen();
+            }
+          }
+
     </script>
 </body>
 </html>
+
